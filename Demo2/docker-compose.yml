@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  redis-cluster-a:
+    image: redis:latest
+    command: ["redis-server", "/etc/redis/redis.conf", "--cluster-enabled", "yes", "--cluster-config-file", "/data/nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes"]
+    volumes:
+      - ./redis-cluster-a-data:/data
+      - ./redis-cluster-a.conf:/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    networks:
+      - redis-net
+
+  redis-cluster-b:
+    image: redis:latest
+    command: ["redis-server", "/etc/redis/redis.conf", "--cluster-enabled", "yes", "--cluster-config-file", "/data/nodes.conf", "--cluster-node-timeout", "5000", "--appendonly", "yes"]
+    volumes:
+      - ./redis-cluster-b-data:/data
+      - ./redis-cluster-b.conf:/etc/redis/redis.conf
+    ports:
+      - "6380:6379"  # Usamos el puerto 6380 para evitar conflictos con el clúster A
+    networks:
+      - redis-net
+
+networks:
+  redis-net:
